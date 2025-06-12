@@ -152,10 +152,11 @@ class AuthController {
         if(isPasswordMatch){
             // login successful, token generate garne
             const token = jwt.sign({id : data[0].id},"secrets",{
-                expiresIn : "90d" //expire after 90 days
+                expiresIn : "30d" //expire after 30 days
             })
-            res.json({
-                token : token
+            res.status(200).json({
+                token : token,
+                message : "Login successful"
             })
         }else{
             res.status(403).json({
