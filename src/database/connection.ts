@@ -1,4 +1,6 @@
 import {Sequelize} from 'sequelize-typescript';
+import { config } from 'dotenv';
+config(); // load environment variables from .env file
 
 const sequelize = new Sequelize({
     database : process.env.DB_NAME ,  //database name
