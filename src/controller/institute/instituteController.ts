@@ -1,11 +1,18 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import sequelize from '../../database/connection';
 import generateRandominstituteNumber from '../../services/generateRandominstituteNumber';
 
-
+interface IExtendedRequest extends Request {
+    user?: {
+        name: string,
+        age: number
+    }
+}
 
 class InstituteController {
-    static async createInstitute(req:Request, res:Response) {
+    // console.log("Triggered InstituteController")
+    static async createInstitute(req:IExtendedRequest, res:Response, next : NextFunction) {
+        console.log(req.user, "Name from middlieware")
         const {instituteName, instituteEmail, institutePhoneNumber, instituteAddress} = req.body
         const instituteVatNo = req.body.instituteVatNo || null
         const institutePanNo = req.body.institutePanNo || null
@@ -43,18 +50,25 @@ class InstituteController {
            ] 
          })
 
-        await sequelize.query(`CREATE TABLE teacher_${instituteNumber} (
-            id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-            teacherName VARCHAR(255) NOT NULL,
-            teacherEmail VARCHAR(255) NOT NULL UNIQUE,
-            teacherPhoneNumber VARCHAR(255) NOT NULL UNIQUE
-            )`) 
+        // await sequelize.query(`CREATE TABLE teacher_${instituteNumber} (
+        //     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        //     teacherName VARCHAR(255) NOT NULL,
+        //     teacherEmail VARCHAR(255) NOT NULL UNIQUE,
+        //     teacherPhoneNumber VARCHAR(255) NOT NULL UNIQUE
+        //     )`) 
 
-       res.status(200).json({
-            message: "Institute created successfully"
-        })
+       next() // call next middleware
 
     }
 }
+
+// const createTeacherTable = async (req: Request, res: Response)=>{
+//     // await sequelize.query(`CREATE TABLE taecher_${instituteNumber} (
+//     //     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+//     //     teacherName VARCHAR(255) NOT NULL,
+//     //     teacherEmail VARCHAR(255) NOT NULL UNIQUE,
+//     //     teacherPhoneNumber VARCHAR(255) NOT NULL UNIQUE
+//     //     )`)
+// }
 
 export default InstituteController
