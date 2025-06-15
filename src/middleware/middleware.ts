@@ -1,14 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import User from '../database/models/user.model'
-
-interface IExtendedRequest extends Request {
-    user ? : {
-       email: string,
-       role: string,
-       username: string | null 
-    }
-}
+import { IExtendedRequest } from './type'
 
 
 class Middleware {

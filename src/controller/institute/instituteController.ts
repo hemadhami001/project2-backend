@@ -1,13 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import sequelize from '../../database/connection';
 import generateRandominstituteNumber from '../../services/generateRandominstituteNumber';
+import { IExtendedRequest } from '../../middleware/type';
 
-interface IExtendedRequest extends Request {
-    user?: {
-        name: string,
-        age: number
-    }
-}
 
 class InstituteController {
     // console.log("Triggered InstituteController")
