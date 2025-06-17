@@ -36,6 +36,18 @@ class User extends Model{
         defaultValue: 'student'
     })
     declare role:string
+
+    @Column({
+        type : DataType.STRING
+    })
+    declare currentInstituteNumber: string
+
+    /*
+    single user can have multiple institutes
+    ex: super-admin can have multiple institutes
+    but for now we will just keep one institute per user
+    and tyo user current kun institute ma cha bhanera
+    */
 }
 
 export default User 
