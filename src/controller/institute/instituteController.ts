@@ -3,12 +3,12 @@ import sequelize from '../../database/connection';
 import generateRandominstituteNumber from '../../services/generateRandominstituteNumber';
 import { IExtendedRequest } from '../../middleware/type';
 import User from '../../database/models/user.model';
+import asyncErrorHandler from '../../services/asyncErrorHandler';
 
 
 class InstituteController {
     // console.log("Triggered InstituteController")
-    static async createInstitute(req:IExtendedRequest, res:Response, next : NextFunction) {
-        try {
+    static async  createInstitute(req:IExtendedRequest, res:Response, next : NextFunction) {
           console.log(req.user, "Name from middlieware")
         const {instituteName, instituteEmail, institutePhoneNumber, instituteAddress} = req.body
         const instituteVatNo = req.body.instituteVatNo || null
@@ -33,8 +33,8 @@ class InstituteController {
         instituteEmail VARCHAR(255) NOT NULL,
         institutePhoneNumber VARCHAR(15) NOT NULL UNIQUE,
         instituteAddress VARCHAR(255) NOT NULL,
-        institutePanNo VARCHAR(20),
-        instituteVatNo VARCHAR(20),
+        institutePanNo VARCHAR(255),
+        instituteVatNo VARCHAR(255),
         createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )`)
@@ -78,24 +78,24 @@ class InstituteController {
 
         // req.user?.instituteNumber = instituteNumber;
          next() // call next middleware
-        } catch (error) {
-          console.log(error)
-        }
     }
 
     static async createTeacherTable(req:IExtendedRequest, res:Response, next : NextFunction) {
-     try {
+  
        const instituteNumber = req.instituteNumber
       await sequelize.query(`CREATE TABLE IF NOT EXISTS teacher_${instituteNumber} (
             id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
             teacherName VARCHAR(255) NOT NULL,
             teacherEmail VARCHAR(255) NOT NULL UNIQUE,
-            teacherPhoneNumber VARCHAR(255) NOT NULL UNIQUE
+            teacherPhoneNumber VARCHAR(255) NOT NULL UNIQUE,
+            teacherExpertise VARCHAR(255),
+            joinedDate DATE,
+            salary VARCHAR(100),
+            createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP 
             )`)
             next() // call next middleware
-     } catch (error) {
-      console.log(error)
-     }
+
     }
     
     static async createStudentTable(req:IExtendedRequest, res:Response, next : NextFunction) {
@@ -103,7 +103,12 @@ class InstituteController {
       await sequelize.query(`CREATE TABLE IF NOT EXISTS student_${instituteNumber} (
         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
         studentName VARCHAR(255) NOT NULL,
-        studentPhoneNumber VARCHAR(255) NOT NULL UNIQUE
+        studentPhoneNumber VARCHAR(255) NOT NULL UNIQUE,
+        studentAddress TEXT,
+        enrolledDate DATE,
+        studentImage VARCHAR(255),
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )`)
       next() 
     }
@@ -113,7 +118,13 @@ class InstituteController {
       await sequelize.query(`CREATE TABLE IF NOT EXISTS course_${instituteNumber} (
         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
         courseName VARCHAR(255) NOT NULL UNIQUE,
-        coursePrice DECIMAL(10, 2) NOT NULL
+        coursePrice VARCHAR(255) NOT NULL,
+        courseDuration VARCHAR(255) NOT NULL,
+        courseLevel ENUM('beginner','intermediate','advance') NOT NULL,
+        courseThumbnail VARCHAR(255),
+        courseDescription TEXT,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )`) 
 
         res.status(200).json({
