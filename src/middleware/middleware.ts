@@ -33,7 +33,18 @@ class Middleware {
             //         id : resultaayo.id
             //     }
             // })
-            const userData = await User.findByPk(resultaayo.id)
+            const userData = await User.findByPk(resultaayo.id,{
+                attributes : ['id', 'currentInstituteNumber']
+            })
+            /*
+            userData = {
+            id : "",
+            currentInstituteNumber : ""
+            }
+
+            */
+
+
             if (!userData){
                 res.status(403).json({
                     message: "No user found with this id,invalid token"
